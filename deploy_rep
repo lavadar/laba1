@@ -1,0 +1,47 @@
+import subprocess
+
+def run_command(command):
+    """Helper function to run shell commands."""
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode != 0:
+        print(f"Error: {result.stderr.strip()}")
+        exit(1)
+    return result.stdout.strip()
+
+def checkout_branch(branch):
+    """Checkout to the specified branch."""
+    run_command(["git", "checkout", branch])
+    print(f"Switched to branch: {branch}")
+
+def merge_branch(source_branch):
+    """Merge the specified source branch into the current branch."""
+    run_command(["git", "merge", source_branch])
+    print(f"Merged {source_branch} into {run_command(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])}")
+
+def create_tag(tag_name):
+    """Create a new tag."""
+    run_command(["git", "tag", tag_name])
+    print(f"Created tag: {tag_name}")
+
+def push_changes():
+    """Push changes to the remote repository."""
+    run_command(["git", "push", "origin", "prd", "--tags"])
+    print("Pushed changes and tags to the remote repository.")
+
+if __name__ == "__main__":
+    try:
+        # Переключаемся на ветку prd
+        checkout_branch("prd")
+
+        # Сливаем изменения из ветки dev
+        merge_branch("dev")
+
+        # Создаем тег на последней ревизии
+        tag_name = input("Введите имя тега: ")
+        create_tag(tag_name)
+
+        # Пушим изменения и тег на удаленный репозиторий
+        push_changes()
+
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
