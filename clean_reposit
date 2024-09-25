@@ -1,0 +1,17 @@
+import os
+import subprocess
+
+def clear_git_repo():
+    # Сбрасываем изменения в отслеживаемых файлах
+    subprocess.run(["git", "reset", "--hard"], check=True)
+    
+    # Удаляем неотслеживаемые файлы и каталоги
+    subprocess.run(["git", "clean", "-fd"], check=True)
+
+if __name__ == "__main__":
+    # Проверяем, что мы находимся в директории Git репозитория
+    if not os.path.exists(".git"):
+        print("Этот скрипт нужно запускать в директории Git репозитория.")
+    else:
+        clear_git_repo()
+        print("Репозиторий успешно очищен от изменений.")
